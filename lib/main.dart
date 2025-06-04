@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'FiscalBox',
-      initialRoute: '/login',
+      initialRoute: '/start',
       getPages: AppRoutes.routes,
     );
   }
