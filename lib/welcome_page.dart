@@ -68,20 +68,19 @@ class WelcomePage extends StatelessWidget {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      onPressed: () {
-                        Get.toNamed('/login');
-                      },
                       child: Text(
-                        'Entrar',
+                        'Fazer Login',
                         style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
+                          fontFamily: 'Montserrat',
+                          fontSize: 18,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
