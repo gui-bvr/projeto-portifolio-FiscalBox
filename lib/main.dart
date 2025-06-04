@@ -1,33 +1,24 @@
-import 'package:fluo/fluo.dart';
-import 'package:fluo/fluo_onboarding.dart';
-import 'package:fluo/l10n/fluo_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'app_routes.dart';
 
-void main() {
-  runApp(const Example());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: 'https://your-project-id.supabase.co',
+    anonKey: 'your-anon-key',
+  );
+  runApp(MyApp());
 }
 
-class Example extends StatelessWidget {
-  const Example({super.key});
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: const [
-        // Important: add this one
-        FluoLocalizations.delegate,
-        // ...other delegates...
-      ],
-      home: FluoOnboarding(
-        apiKey: 'GTDVrEkA2GvPrbsuxM43JVSzVrIISIGYT5hGNvZLozA=',
-        onUserReady: (fluo) async {
-          // 1. Initialize the Supabase client somewhere in your code
-          // 2. Use 'recoverSession' as below:
-          await Supabase.instance.client.auth
-              .recoverSession(fluo.supabaseSession!);
-        },
-      ),
+    return GetMaterialApp(
+      title: 'FiscalBox',
+      initialRoute: '/login',
+      //getPages: AppRoutes.routes,
     );
   }
 }
