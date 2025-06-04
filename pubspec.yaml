@@ -38,6 +38,7 @@ dependencies:
   fluo: ^0.11.0
   supabase_flutter: ^2.9.0
   get: ^4.7.2
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
