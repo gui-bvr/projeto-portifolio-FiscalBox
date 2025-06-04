@@ -5,7 +5,7 @@ import 'welcome_page.dart';
 
 class AppRoutes {
   static final routes = [
-    GetPage(name: '/start', page: () => const WelcomePage()),
+    GetPage(name: '/welcome', page: () => const WelcomePage()),
     GetPage(name: '/login', page: () => LoginPage()),
     GetPage(name: '/home', page: () => HomePage()),
   ];
