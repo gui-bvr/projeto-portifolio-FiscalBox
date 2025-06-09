@@ -7,11 +7,16 @@ import 'app_routes.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  await GetStorage.init();
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
   runApp(MyApp());
+}
+
+class GetStorage {
+  static Future<void> init() async {}
 }
 
 class MyApp extends StatelessWidget {
@@ -22,7 +27,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'FiscalBox',
       debugShowCheckedModeBanner: false,
-      initialRoute: '/welcome',
+      initialRoute: '/home',
       getPages: AppRoutes.routes,
       locale: Locale('pt', 'BR'),
     );
