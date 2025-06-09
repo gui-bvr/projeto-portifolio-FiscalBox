@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../themes/app_snackbar.dart';
 
 class AuthController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -19,12 +20,13 @@ class AuthController extends GetxController {
       );
 
       if (response.user == null) {
-        Get.snackbar('Erro', 'Verifique seu e-mail para confirmar a conta');
+        AppSnackbar.error('Verifique seu e-mail para confirmar a conta');
       } else {
+        AppSnackbar.success('Cadastro realizado com sucesso!');
         Get.offAllNamed('/home');
       }
     } catch (e) {
-      Get.snackbar('Erro ao registrar', e.toString());
+      AppSnackbar.error('Erro ao registrar: ${e.toString()}');
     } finally {
       isLoading.value = false;
     }
@@ -33,10 +35,20 @@ class AuthController extends GetxController {
   Future<void> signIn(String email, String password) async {
     try {
       isLoading.value = true;
-      await supabase.auth.signInWithPassword(email: email, password: password);
-      Get.offAllNamed('/home');
+
+      final response = await Supabase.instance.client.auth
+          .signInWithPassword(email: email, password: password);
+
+      if (response.user != null) {
+        AppSnackbar.success('Login realizado com sucesso');
+        Get.offAllNamed('/home');
+      } else {
+        AppSnackbar.error('Erro: usuário retornado como null');
+      }
+    } on AuthException catch (e) {
+      AppSnackbar.error('AuthException: ${e.message}');
     } catch (e) {
-      Get.snackbar('Erro ao entrar', e.toString());
+      AppSnackbar.error('Erro desconhecido: ${e.toString()}');
     } finally {
       isLoading.value = false;
     }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -18,9 +20,13 @@ class HomePage extends StatelessWidget {
         elevation: 0,
         centerTitle: false,
         actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Icon(Icons.menu, color: Colors.black),
+          IconButton(
+            icon: Icon(Icons.logout, color: Colors.black),
+            tooltip: 'Sair',
+            onPressed: () async {
+              await Supabase.instance.client.auth.signOut();
+              Get.offAllNamed('/login');
+            },
           ),
         ],
       ),

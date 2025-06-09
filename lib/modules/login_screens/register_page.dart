@@ -351,9 +351,8 @@ class _RegisterPageState extends State<RegisterPage> {
         ],
       ),
       child: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black, size: 35),
-        onPressed: () => Get.back(),
-      ),
+          icon: const Icon(Icons.arrow_back, color: Colors.black, size: 35),
+          onPressed: () => Get.toNamed('/welcome')),
     );
   }
 }
