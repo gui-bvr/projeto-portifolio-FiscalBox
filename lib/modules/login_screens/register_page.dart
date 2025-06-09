@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import '../../controllers/auth_controller.dart';
+import '../../../../controllers/auth_controller.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
