@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../../../../controllers/auth_controller.dart';
+import '../../themes/app_snackbar.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -24,7 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
-  final _authController = Get.put(AuthController());
+  final _authController = Get.find<AuthController>();
 
   final _cpfMask = MaskTextInputFormatter(
     mask: '###.###.###-##',
@@ -98,32 +99,32 @@ class _RegisterPageState extends State<RegisterPage> {
         cpfCnpj.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty) {
-      Get.snackbar('Erro', 'Preencha todos os campos');
+      AppSnackbar.error('Preencha todos os campos');
       return;
     }
 
     if (!_isValidFullName(name)) {
-      Get.snackbar('Erro', 'Informe seu nome completo corretamente');
+      AppSnackbar.error('Informe seu nome completo corretamente');
       return;
     }
 
     if (!_isValidEmail(email)) {
-      Get.snackbar('Erro', 'E-mail inválido');
+      AppSnackbar.error('Email inválido');
       return;
     }
 
     if (!_useCnpj && !_isValidCpf(docOnlyNumbers)) {
-      Get.snackbar('Erro', 'CPF inválido');
+      AppSnackbar.error('CPF inválido');
       return;
     }
 
     if (_useCnpj && !_isValidCnpj(docOnlyNumbers)) {
-      Get.snackbar('Erro', 'CNPJ inválido');
+      AppSnackbar.error('CNPJ inválido');
       return;
     }
 
     if (password != confirmPassword) {
-      Get.snackbar('Erro', 'As senhas não coincidem');
+      AppSnackbar.error('As senhas não coincidem');
       return;
     }
 
@@ -157,13 +158,13 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           SafeArea(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildBackButton(),
-                  SizedBox(height: 35),
-                  Text(
+                  const SizedBox(height: 35),
+                  const Text(
                     'REGISTRAR\nNOVA CONTA',
                     style: TextStyle(
                       fontFamily: 'Montserrat',
@@ -172,19 +173,19 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 45),
+                  const SizedBox(height: 45),
                   _buildTextField(
                     controller: _nameController,
                     icon: Icons.person,
                     hint: 'Nome completo',
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildTextField(
                     controller: _emailController,
                     icon: Icons.email,
                     hint: 'Email',
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
                     controller: _cpfCnpjController,
                     onChanged: (value) {
@@ -206,13 +207,13 @@ class _RegisterPageState extends State<RegisterPage> {
                       });
                     },
                     keyboardType: TextInputType.number,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontFamily: 'Montserrat', color: Colors.white),
                     decoration: InputDecoration(
-                      prefixIcon:
-                          Icon(Icons.assignment_ind, color: Colors.white70),
+                      prefixIcon: const Icon(Icons.assignment_ind,
+                          color: Colors.white70),
                       hintText: 'CPF ou CNPJ',
-                      hintStyle: TextStyle(color: Colors.white54),
+                      hintStyle: const TextStyle(color: Colors.white54),
                       filled: true,
                       fillColor: Colors.black.withOpacity(0.3),
                       border: OutlineInputBorder(
@@ -221,7 +222,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildTextField(
                     controller: _passwordController,
                     icon: Icons.lock,
@@ -238,7 +239,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           setState(() => _obscurePassword = !_obscurePassword),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildTextField(
                     controller: _confirmPasswordController,
                     icon: Icons.lock_outline,
@@ -255,7 +256,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           _obscureConfirmPassword = !_obscureConfirmPassword),
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -268,7 +269,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Registrar',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
@@ -278,14 +279,15 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Center(
                     child: GestureDetector(
                       onTap: () => Get.toNamed('/login'),
                       child: Text.rich(
                         TextSpan(
                           text: 'Já possui uma conta? ',
-                          style: TextStyle(color: Colors.white70, fontSize: 18),
+                          style: const TextStyle(
+                              color: Colors.white70, fontSize: 18),
                           children: const [
                             TextSpan(
                               text: ' Entrar',
@@ -319,12 +321,12 @@ class _RegisterPageState extends State<RegisterPage> {
     return TextField(
       controller: controller,
       obscureText: obscure,
-      style: TextStyle(fontFamily: 'Montserrat', color: Colors.white),
+      style: const TextStyle(fontFamily: 'Montserrat', color: Colors.white),
       decoration: InputDecoration(
         prefixIcon: Icon(icon, color: Colors.white70),
         suffixIcon: suffixIcon,
         hintText: hint,
-        hintStyle: TextStyle(color: Colors.white54),
+        hintStyle: const TextStyle(color: Colors.white54),
         filled: true,
         fillColor: Colors.black.withOpacity(0.3),
         border: OutlineInputBorder(
@@ -344,12 +346,12 @@ class _RegisterPageState extends State<RegisterPage> {
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
             blurRadius: 6,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
       child: IconButton(
-        icon: Icon(Icons.arrow_back, color: Colors.black, size: 35),
+        icon: const Icon(Icons.arrow_back, color: Colors.black, size: 35),
         onPressed: () => Get.back(),
       ),
     );
