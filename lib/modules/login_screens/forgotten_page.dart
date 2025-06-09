@@ -22,19 +22,12 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
       return;
     }
 
-    final emailRegex = RegExp(r'^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,}\$');
-    if (!emailRegex.hasMatch(email)) {
-      AppSnackbar.error('E-mail inválido');
-      return;
-    }
-
     try {
       await Supabase.instance.client.auth.resetPasswordForEmail(email);
       AppSnackbar.success('E-mail de recuperação enviado com sucesso');
       Get.offAllNamed('/login');
     } catch (e) {
       AppSnackbar.error('Erro ao enviar e-mail: ${e.toString()}');
-      print('Erro ao enviar recuperação: $e');
     }
   }
 
@@ -148,7 +141,7 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
       ),
       child: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black, size: 35),
-        onPressed: () => Get.toNamed('/welcome'),
+        onPressed: () => Get.toNamed('/login'),
       ),
     );
   }

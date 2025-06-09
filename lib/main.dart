@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'app_routes.dart';
+import 'routes/app_routes.dart';
 import 'controllers/auth_controller.dart';
 
 Future<void> main() async {
