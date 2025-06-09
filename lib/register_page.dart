@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '/services/auth_controller.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import '../../controllers/auth_controller.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -14,10 +15,56 @@ class _RegisterPageState extends State<RegisterPage> {
   final _cpfCnpjController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
   final _authController = Get.put(AuthController());
+
+  final _cpfMask = MaskTextInputFormatter(
+    mask: '###.###.###-##',
+    filter: {"#": RegExp(r'[0-9]')},
+  );
+
+  final _cnpjMask = MaskTextInputFormatter(
+    mask: '##.###.###/####-##',
+    filter: {"#": RegExp(r'[0-9]')},
+  );
+
+  bool _useCnpj = false;
+
+  bool _isValidCpf(String cpf) {
+    cpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cpf.length != 11 || RegExp(r'^(\d)\1*$').hasMatch(cpf)) return false;
+    List<int> digits = cpf.split('').map(int.parse).toList();
+    for (int i = 9; i < 11; i++) {
+      int sum = 0;
+      for (int j = 0; j < i; j++) {
+        sum += digits[j] * ((i + 1) - j);
+      }
+      int mod = (sum * 10) % 11;
+      if (mod == 10) mod = 0;
+      if (mod != digits[i]) return false;
+    }
+    return true;
+  }
+
+  bool _isValidCnpj(String cnpj) {
+    cnpj = cnpj.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cnpj.length != 14 || RegExp(r'^(\d)\1*$').hasMatch(cnpj)) return false;
+    List<int> digits = cnpj.split('').map(int.parse).toList();
+    List<int> calc1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    List<int> calc2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    int sum1 =
+        List.generate(12, (i) => digits[i] * calc1[i]).reduce((a, b) => a + b);
+    int check1 = sum1 % 11;
+    check1 = check1 < 2 ? 0 : 11 - check1;
+    int sum2 =
+        List.generate(13, (i) => digits[i] * calc2[i]).reduce((a, b) => a + b);
+    int check2 = sum2 % 11;
+    check2 = check2 < 2 ? 0 : 11 - check2;
+    return check1 == digits[12] && check2 == digits[13];
+  }
 
   void _register() {
     final name = _nameController.text.trim();
@@ -26,12 +73,24 @@ class _RegisterPageState extends State<RegisterPage> {
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
+    final docOnlyNumbers = cpfCnpj.replaceAll(RegExp(r'\D'), '');
+
     if (name.isEmpty ||
         email.isEmpty ||
         cpfCnpj.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty) {
       Get.snackbar('Erro', 'Preencha todos os campos');
+      return;
+    }
+
+    if (!_useCnpj && !_isValidCpf(docOnlyNumbers)) {
+      Get.snackbar('Erro', 'CPF inválido');
+      return;
+    }
+
+    if (_useCnpj && !_isValidCnpj(docOnlyNumbers)) {
+      Get.snackbar('Erro', 'CNPJ inválido');
       return;
     }
 
@@ -91,10 +150,42 @@ class _RegisterPageState extends State<RegisterPage> {
                     hint: 'Email',
                   ),
                   SizedBox(height: 20),
-                  _buildTextField(
+                  TextField(
                     controller: _cpfCnpjController,
-                    icon: Icons.assignment_ind,
-                    hint: 'CPF ou CNPJ',
+                    onChanged: (value) {
+                      final onlyNumbers = value.replaceAll(RegExp(r'\D'), '');
+                      String masked = '';
+                      if (onlyNumbers.length > 11) {
+                        _useCnpj = true;
+                        masked = _cnpjMask.maskText(onlyNumbers);
+                      } else {
+                        _useCnpj = false;
+                        masked = _cpfMask.maskText(onlyNumbers);
+                      }
+
+                      setState(() {
+                        _cpfCnpjController.value = TextEditingValue(
+                          text: masked,
+                          selection:
+                              TextSelection.collapsed(offset: masked.length),
+                        );
+                      });
+                    },
+                    keyboardType: TextInputType.number,
+                    style: TextStyle(
+                        fontFamily: 'Montserrat', color: Colors.white),
+                    decoration: InputDecoration(
+                      prefixIcon:
+                          Icon(Icons.assignment_ind, color: Colors.white70),
+                      hintText: 'CPF ou CNPJ',
+                      hintStyle: TextStyle(color: Colors.white54),
+                      filled: true,
+                      fillColor: Colors.black.withOpacity(0.3),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
                   ),
                   SizedBox(height: 20),
                   _buildTextField(
@@ -109,9 +200,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             : Icons.visibility,
                         color: Colors.white70,
                       ),
-                      onPressed: () {
-                        setState(() => _obscurePassword = !_obscurePassword);
-                      },
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
                     ),
                   ),
                   SizedBox(height: 20),
@@ -127,10 +217,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             : Icons.visibility,
                         color: Colors.white70,
                       ),
-                      onPressed: () {
-                        setState(() =>
-                            _obscureConfirmPassword = !_obscureConfirmPassword);
-                      },
+                      onPressed: () => setState(() =>
+                          _obscureConfirmPassword = !_obscureConfirmPassword),
                     ),
                   ),
                   SizedBox(height: 30),
