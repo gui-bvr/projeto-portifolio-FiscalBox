@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../../controllers/auth_controller.dart';
 
@@ -15,6 +16,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final _cpfCnpjController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  final _storage = GetStorage();
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -32,6 +35,11 @@ class _RegisterPageState extends State<RegisterPage> {
   );
 
   bool _useCnpj = false;
+
+  bool _isValidEmail(String email) {
+    final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$');
+    return regex.hasMatch(email);
+  }
 
   bool _isValidCpf(String cpf) {
     cpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
@@ -72,7 +80,6 @@ class _RegisterPageState extends State<RegisterPage> {
     final cpfCnpj = _cpfCnpjController.text.trim();
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
-
     final docOnlyNumbers = cpfCnpj.replaceAll(RegExp(r'\D'), '');
 
     if (name.isEmpty ||
@@ -81,6 +88,11 @@ class _RegisterPageState extends State<RegisterPage> {
         password.isEmpty ||
         confirmPassword.isEmpty) {
       Get.snackbar('Erro', 'Preencha todos os campos');
+      return;
+    }
+
+    if (!_isValidEmail(email)) {
+      Get.snackbar('Erro', 'E-mail inválido');
       return;
     }
 
@@ -98,6 +110,11 @@ class _RegisterPageState extends State<RegisterPage> {
       Get.snackbar('Erro', 'As senhas não coincidem');
       return;
     }
+
+    // Salvar localmente
+    _storage.write('nome', name);
+    _storage.write('email', email);
+    _storage.write('documento', cpfCnpj);
 
     _authController.signUp(email, password, name, cpfCnpj);
   }
@@ -162,7 +179,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         _useCnpj = false;
                         masked = _cpfMask.maskText(onlyNumbers);
                       }
-
                       setState(() {
                         _cpfCnpjController.value = TextEditingValue(
                           text: masked,
