@@ -6,6 +6,8 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../../controllers/auth_controller.dart';
 
 class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
+
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
@@ -35,6 +37,15 @@ class _RegisterPageState extends State<RegisterPage> {
   );
 
   bool _useCnpj = false;
+
+  bool _isValidFullName(String name) {
+    final parts = name.trim().split(' ');
+    if (parts.length < 2) return false;
+    for (var part in parts) {
+      if (part.length < 2) return false;
+    }
+    return true;
+  }
 
   bool _isValidEmail(String email) {
     final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$');
@@ -91,6 +102,11 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
+    if (!_isValidFullName(name)) {
+      Get.snackbar('Erro', 'Informe seu nome completo corretamente');
+      return;
+    }
+
     if (!_isValidEmail(email)) {
       Get.snackbar('Erro', 'E-mail inválido');
       return;
@@ -111,7 +127,6 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    // Salvar localmente
     _storage.write('nome', name);
     _storage.write('email', email);
     _storage.write('documento', cpfCnpj);
@@ -127,7 +142,10 @@ class _RegisterPageState extends State<RegisterPage> {
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF1A1A1A), Color.fromARGB(255, 69, 69, 69)],
+                colors: const [
+                  Color(0xFF1A1A1A),
+                  Color.fromARGB(255, 69, 69, 69)
+                ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -268,7 +286,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextSpan(
                           text: 'Já possui uma conta? ',
                           style: TextStyle(color: Colors.white70, fontSize: 18),
-                          children: [
+                          children: const [
                             TextSpan(
                               text: ' Entrar',
                               style: TextStyle(
