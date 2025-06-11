@@ -2,3 +2,10 @@ fastapi
 uvicorn
 python-multipart
 pydantic
+requests
+signxml
+lxml
+requests
+lxml
+signxml
+pyOpenSSL
