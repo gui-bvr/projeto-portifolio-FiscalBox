@@ -47,9 +47,5 @@ app.*.map.json
 # .env
 .env
 
-# Backend da integração com o SEFAZ
-/backend_nfe/certs
-/backend_nfe/venv
-/backend_nfe/*.pyc
-/backend_nfe/__pycache__/
-/venv
+# Certificado
+/backend/certificado
