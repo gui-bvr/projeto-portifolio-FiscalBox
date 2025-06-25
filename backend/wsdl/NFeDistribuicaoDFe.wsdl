@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://www.portalfiscal.inf.br/nfe/wsdl/NFeDistribuicaoDFe"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             name="NFeDistribuicaoDFe"
+             targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeDistribuicaoDFe"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <types>
+    <xsd:schema targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeDistribuicaoDFe">
+      <xsd:element name="nfeDistDFeInteresse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="nfeCabecMsg" type="xsd:string" />
+            <xsd:element name="nfeDadosMsg" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="nfeDistDFeInteresseResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="nfeDistDFeInteresseResult" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </types>
+
+  <message name="nfeDistDFeInteresseRequest">
+    <part name="parameters" element="tns:nfeDistDFeInteresse"/>
+  </message>
+
+  <message name="nfeDistDFeInteresseResponse">
+    <part name="parameters" element="tns:nfeDistDFeInteresseResponse"/>
+  </message>
+
+  <portType name="NFeDistribuicaoDFeSoap">
+    <operation name="nfeDistDFeInteresse">
+      <input message="tns:nfeDistDFeInteresseRequest"/>
+      <output message="tns:nfeDistDFeInteresseResponse"/>
+    </operation>
+  </portType>
+
+  <binding name="NFeDistribuicaoDFeSoap" type="tns:NFeDistribuicaoDFeSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="nfeDistDFeInteresse">
+      <soap:operation soapAction="http://www.portalfiscal.inf.br/nfe/wsdl/NFeDistribuicaoDFe/nfeDistDFeInteresse" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+
+  <service name="NFeDistribuicaoDFe">
+    <documentation>Webservice de Distribuição de Documentos Fiscais Eletrônicos</documentation>
+    <port name="NFeDistribuicaoDFeSoap" binding="tns:NFeDistribuicaoDFeSoap">
+      <soap:address location="https://www.nfe.fazenda.gov.br/NFeDistribuicaoDFe/NFeDistribuicaoDFe.asmx"/>
+    </port>
+  </service>
+</definitions>
