@@ -46,8 +46,3 @@ app.*.map.json
 
 # .env
 .env
-
-# Backend
-/backend/certificado
-/backend/.env
-/backend/node_modules
