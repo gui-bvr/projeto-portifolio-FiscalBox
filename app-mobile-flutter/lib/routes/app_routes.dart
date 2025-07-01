@@ -10,6 +10,7 @@ import '../modules/login_screens/register_page.dart';
 // --> Páginas Principais
 // (/modules/home_screens)
 import '../modules/home_screens/home_page.dart';
+import '../modules/home_screens/help_page.dart';
 
 // Rotas:
 class AppRoutes {
@@ -23,5 +24,6 @@ class AppRoutes {
     // --> Páginas Principais
     // (/modules/home_screens)
     GetPage(name: '/home', page: () => HomePage()),
+    GetPage(name: '/ajuda', page: () => HelpPage()),
   ];
 }

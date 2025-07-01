@@ -1,41 +1,109 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/cupertino.dart';
 import 'home_controller.dart';
 
 class HomePage extends StatelessWidget {
   final controller = Get.put(HomeController());
-  final _storage = GetStorage();
 
   String saudacao() {
     final hora = DateTime.now().hour;
     if (hora < 12) {
-      return 'Bom dia';
+      return 'Bom dia,';
     } else if (hora < 18) {
-      return 'Boa tarde';
+      return 'Boa tarde,';
     } else {
-      return 'Boa noite';
+      return 'Boa noite,';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final nome = _storage.read('nome') ?? '';
     final saudacaoTexto = saudacao();
+    final user = Supabase.instance.client.auth.currentUser;
+    final nome = user?.userMetadata?['full_name'] ?? 'Usuário';
+    final email = user?.email ?? 'email@exemplo.com';
 
     return Scaffold(
       extendBody: true,
+      drawerEnableOpenDragGesture: true,
+      drawerScrimColor: Colors.black.withOpacity(0.4),
+      drawer: Drawer(
+        backgroundColor: const Color(0xFF1A1A1A),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 80),
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.grey,
+                    child: Icon(Icons.person, color: Colors.white, size: 30),
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 20),
+                      Text(
+                        nome,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        email,
+                        style: const TextStyle(
+                          color: Colors.white60,
+                          fontFamily: 'Montserrat',
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  _buildDrawerItem(CupertinoIcons.home, 'Home', '/home'),
+                  _buildDrawerItem(Icons.help_outline, 'Ajuda', '/ajuda'),
+                  _buildDrawerItem(CupertinoIcons.settings_solid,
+                      'Configurações', '/configuracoes'),
+                  _buildDrawerItem(CupertinoIcons.info, 'Sobre', '/sobre'),
+                  ListTile(
+                    leading: const Icon(CupertinoIcons.return_icon,
+                        color: Colors.white),
+                    title: const Text('Sair',
+                        style: TextStyle(
+                            color: Colors.white, fontFamily: 'Montserrat')),
+                    onTap: () async {
+                      await Supabase.instance.client.auth.signOut();
+                      Get.offAllNamed('/login');
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: const [
-                  Color(0xFF1A1A1A),
-                  Color.fromARGB(255, 69, 69, 69),
-                ],
+                colors: [Color(0xFF1A1A1A), Color.fromARGB(255, 69, 69, 69)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -51,63 +119,47 @@ class HomePage extends StatelessWidget {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Row(
                     children: [
-                      Text(
-                        "$saudacaoTexto,",
-                        style: const TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 20,
-                          color: Colors.white,
+                      Builder(
+                        builder: (context) => IconButton(
+                          icon: const Icon(Icons.menu, color: Colors.white),
+                          onPressed: () => Scaffold.of(context).openDrawer(),
                         ),
                       ),
+                      const SizedBox(width: 10),
                       Text(
-                        nome,
+                        saudacaoTexto,
                         style: const TextStyle(
                           fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 32,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w400,
                           color: Colors.white,
                         ),
                       ),
                     ],
                   ),
                 ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    icon: Icon(Icons.logout, color: Colors.white),
-                    tooltip: 'Sair',
-                    onPressed: () async {
-                      await Supabase.instance.client.auth.signOut();
-                      Get.offAllNamed('/login');
-                    },
-                  ),
-                ),
                 Expanded(
-                  child: Obx(
-                    () => ListView.builder(
-                      padding: EdgeInsets.all(20),
-                      itemCount: controller.documentos.length,
-                      itemBuilder: (context, index) {
-                        final doc = controller.documentos[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Get.toNamed('/detalhes', arguments: doc);
-                          },
-                          child: buildCard(
-                            tipo: doc['tipo']!,
-                            numero: doc['numero']!,
-                            color: Color(0xFFE8EFFA),
-                            textColor: Colors.black,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  child: Obx(() => ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        itemCount: controller.documentos.length,
+                        itemBuilder: (context, index) {
+                          final doc = controller.documentos[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Get.toNamed('/detalhes', arguments: doc);
+                            },
+                            child: buildCard(
+                              tipo: doc['tipo']!,
+                              numero: doc['numero']!,
+                              color: const Color(0xFFE8EFFA),
+                              textColor: Colors.black,
+                            ),
+                          );
+                        },
+                      )),
                 ),
               ],
             ),
@@ -118,7 +170,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white54,
+        unselectedItemColor: Colors.white38,
         selectedFontSize: 0,
         unselectedFontSize: 0,
         iconSize: 30,
@@ -132,6 +184,17 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  Widget _buildDrawerItem(IconData icon, String title, String route) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.white),
+      title: Text(
+        title,
+        style: const TextStyle(color: Colors.white, fontFamily: 'Montserrat'),
+      ),
+      onTap: () => Get.toNamed(route),
+    );
+  }
+
   Widget buildCard({
     required String tipo,
     required String numero,
@@ -139,8 +202,8 @@ class HomePage extends StatelessWidget {
     required Color textColor,
   }) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      padding: EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(20),
@@ -151,9 +214,7 @@ class HomePage extends StatelessWidget {
             right: 0,
             child: IconButton(
               icon: Icon(Icons.more_vert, color: textColor),
-              onPressed: () {
-                // ações futuras aqui
-              },
+              onPressed: () {},
             ),
           ),
           Column(
@@ -168,7 +229,7 @@ class HomePage extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
                 numero,
                 style: TextStyle(
