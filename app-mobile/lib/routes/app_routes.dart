@@ -11,6 +11,7 @@ import '../modules/login_screens/register_page.dart';
 // (/modules/home_screens)
 import '../modules/home_screens/home_page.dart';
 import '../modules/home_screens/help_page.dart';
+import '../modules/home_screens/about_page.dart';
 
 // Rotas:
 class AppRoutes {
@@ -25,5 +26,6 @@ class AppRoutes {
     // (/modules/home_screens)
     GetPage(name: '/home', page: () => HomePage()),
     GetPage(name: '/ajuda', page: () => HelpPage()),
+    GetPage(name: '/sobre', page: () => AboutPage()),
   ];
 }
