@@ -4,9 +4,18 @@ import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'home_controller.dart';
+import 'settings_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final controller = Get.put(HomeController());
+  int _currentIndex = 0;
 
   String saudacao() {
     final hora = DateTime.now().hour;
@@ -25,6 +34,12 @@ class HomePage extends StatelessWidget {
     final user = Supabase.instance.client.auth.currentUser;
     final nome = user?.userMetadata?['full_name'] ?? 'Usuário';
     final email = user?.email ?? 'email@exemplo.com';
+
+    final pages = [
+      _buildHomeContent(saudacaoTexto),
+      Placeholder(),
+      SettingsPage(),
+    ];
 
     return Scaffold(
       extendBody: true,
@@ -78,8 +93,6 @@ class HomePage extends StatelessWidget {
                 children: [
                   _buildDrawerItem(CupertinoIcons.home, 'Home', '/home'),
                   _buildDrawerItem(Icons.help_outline, 'Ajuda', '/ajuda'),
-                  _buildDrawerItem(CupertinoIcons.settings_solid,
-                      'Configurações', '/configuracoes'),
                   _buildDrawerItem(CupertinoIcons.info, 'Sobre', '/sobre'),
                   ListTile(
                     leading: const Icon(CupertinoIcons.return_icon,
@@ -98,74 +111,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF1A1A1A), Color.fromARGB(255, 69, 69, 69)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-          ),
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Container(color: Colors.black.withOpacity(0.2)),
-          ),
-          SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: Row(
-                    children: [
-                      Builder(
-                        builder: (context) => IconButton(
-                          icon: const Icon(Icons.menu, color: Colors.white),
-                          onPressed: () => Scaffold.of(context).openDrawer(),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        saudacaoTexto,
-                        style: const TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 22,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Obx(() => ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        itemCount: controller.documentos.length,
-                        itemBuilder: (context, index) {
-                          final doc = controller.documentos[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Get.toNamed('/detalhes', arguments: doc);
-                            },
-                            child: buildCard(
-                              tipo: doc['tipo']!,
-                              numero: doc['numero']!,
-                              color: const Color(0xFFE8EFFA),
-                              textColor: Colors.black,
-                            ),
-                          );
-                        },
-                      )),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -174,13 +120,87 @@ class HomePage extends StatelessWidget {
         selectedFontSize: 0,
         unselectedFontSize: 0,
         iconSize: 30,
-        currentIndex: 0,
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.swap_horiz), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: ""),
         ],
       ),
+    );
+  }
+
+  Widget _buildHomeContent(String saudacaoTexto) {
+    return Stack(
+      children: [
+        Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF1A1A1A), Color.fromARGB(255, 69, 69, 69)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
+        BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Container(color: Colors.black.withOpacity(0.2)),
+        ),
+        SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                child: Row(
+                  children: [
+                    Builder(
+                      builder: (context) => IconButton(
+                        icon: const Icon(Icons.menu, color: Colors.white),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      saudacaoTexto,
+                      style: const TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Obx(
+                  () => ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: controller.documentos.length,
+                    itemBuilder: (context, index) {
+                      final doc = controller.documentos[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Get.toNamed('/detalhes', arguments: doc);
+                        },
+                        child: buildCard(
+                          tipo: doc['tipo']!,
+                          numero: doc['numero']!,
+                          color: const Color(0xFFE8EFFA),
+                          textColor: Colors.black,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

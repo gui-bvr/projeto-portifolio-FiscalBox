@@ -14,6 +14,7 @@ Future<void> main() async {
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
   Get.put(AuthController());
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
