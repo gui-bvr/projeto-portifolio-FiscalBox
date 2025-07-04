@@ -12,6 +12,7 @@ import '../modules/login_screens/register_page.dart';
 import '../modules/home_screens/home_page.dart';
 import '../modules/home_screens/help_page.dart';
 import '../modules/home_screens/about_page.dart';
+import '../modules/home_screens/add_folder.dart';
 
 // Rotas:
 class AppRoutes {
@@ -22,6 +23,7 @@ class AppRoutes {
     GetPage(name: '/login', page: () => LoginPage()),
     GetPage(name: '/register', page: () => RegisterPage()),
     GetPage(name: '/forgotten', page: () => ForgottenPasswordPage()),
+    GetPage(name: '/adicionar', page: () => AddFolderPage()),
     // --> Páginas Principais
     // (/modules/home_screens)
     GetPage(name: '/home', page: () => HomePage()),

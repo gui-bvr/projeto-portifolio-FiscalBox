@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import '../../utils/saudacao.dart';
-import 'home_controller.dart';
+import '../../controllers/home_controller.dart';
 import 'settings_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
     final email = user?.email ?? 'email@exemplo.com';
 
     final pages = [
-      _buildHomeContent(saudacaoTexto),
+      _buildHomeContent(saudacaoTexto, nome),
       Placeholder(),
       SettingsPage(),
     ];
@@ -118,10 +118,17 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: ""),
         ],
       ),
+      floatingActionButton: _currentIndex == 0
+          ? FloatingActionButton(
+              backgroundColor: Colors.white,
+              child: const Icon(Icons.add, color: Colors.black),
+              onPressed: () => Get.toNamed('/adicionar'),
+            )
+          : null,
     );
   }
 
-  Widget _buildHomeContent(String saudacaoTexto) {
+  Widget _buildHomeContent(String saudacaoTexto, String nome) {
     return Stack(
       children: [
         Container(
@@ -157,8 +164,8 @@ class _HomePageState extends State<HomePage> {
                       saudacaoTexto,
                       style: const TextStyle(
                         fontFamily: 'Montserrat',
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
                         color: Colors.white,
                       ),
                     ),
@@ -169,13 +176,11 @@ class _HomePageState extends State<HomePage> {
                 child: Obx(
                   () => ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: controller.documentos.length,
+                    itemCount: controller.pastas.length,
                     itemBuilder: (context, index) {
-                      final doc = controller.documentos[index];
+                      final doc = controller.pastas[index];
                       return GestureDetector(
-                        onTap: () {
-                          Get.toNamed('/detalhes', arguments: doc);
-                        },
+                        onTap: () => Get.toNamed('/detalhes', arguments: doc),
                         child: buildCard(
                           tipo: doc['tipo']!,
                           numero: doc['numero']!,
