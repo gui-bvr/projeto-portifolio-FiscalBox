@@ -55,6 +55,47 @@ Brasileiro, ou por alguma instituição autorizada pelos mesmos, em breve.
 
 ## Instruções de Uso
 
+### Configuração do Supabase
+
+```env
+create table public.pastas (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid references auth.users(id) on delete cascade,
+  tipo text,
+  numero text,
+  created_at timestamp with time zone default now()
+);
+```
+
+```env
+-- Ativar RLS na tabela
+ALTER TABLE pastas ENABLE ROW LEVEL SECURITY;
+
+-- Política de SELECT
+CREATE POLICY "Usuario pode ver suas pastas"
+ON pastas
+FOR SELECT
+USING (user_id = auth.uid());
+
+-- Política de INSERT
+CREATE POLICY "Usuario pode inserir suas pastas"
+ON pastas
+FOR INSERT
+WITH CHECK (user_id = auth.uid());
+
+-- Política de UPDATE
+CREATE POLICY "Usuario pode atualizar suas pastas"
+ON pastas
+FOR UPDATE
+USING (user_id = auth.uid());
+
+-- Política de DELETE
+CREATE POLICY "Usuario pode deletar suas pastas"
+ON pastas
+FOR DELETE
+USING (user_id = auth.uid());
+```
+
 ### Aplicação Flutter
 
 Para compilar e executar o aplicativo, você precisa ter o [Flutter](https://flutter.dev/) instalado no dispositivo que irá executa-lo, e um emulador, ou dispositivo físico (Android ou IOS) disponível.

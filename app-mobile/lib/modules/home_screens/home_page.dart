@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/cupertino.dart';
-import '../../utils/saudacao.dart';
+import '../../utils/greeting.dart';
 import '../../controllers/home_controller.dart';
 import 'settings_page.dart';
 
@@ -15,8 +15,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final controller = Get.put(HomeController());
+  final controller = Get.put(HomeController(), permanent: true);
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    controller.carregarPastas();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -186,6 +192,103 @@ class _HomePageState extends State<HomePage> {
                           numero: doc['numero']!,
                           color: const Color(0xFFE8EFFA),
                           textColor: Colors.black,
+                          onMorePressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(16)),
+                              ),
+                              backgroundColor: Colors.grey[900],
+                              constraints: const BoxConstraints(minHeight: 200),
+                              builder: (context) => Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ListTile(
+                                    leading: const Icon(Icons.edit,
+                                        color: Colors.white),
+                                    title: const Text(
+                                      'Editar',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    onTap: () {
+                                      Get.back();
+                                      Get.toNamed(
+                                        '/editar',
+                                        arguments: {
+                                          'tipo': doc['tipo'],
+                                          'numero': doc['numero'],
+                                          'index': index,
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: const Icon(Icons.delete,
+                                        color: Colors.white),
+                                    title: const Text(
+                                      'Excluir',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    onTap: () {
+                                      Get.back();
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => AlertDialog(
+                                          backgroundColor: Colors.grey[900],
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12)),
+                                          title: const Text(
+                                            'Tem certeza?',
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          content: const Text(
+                                            'Deseja realmente excluir esta pasta?\nIsso apagará todos os dados.',
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              color: Colors.white70,
+                                            ),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Get.back(),
+                                              child: const Text(
+                                                'Cancelar',
+                                                style: TextStyle(
+                                                  fontFamily: 'Montserrat',
+                                                  color: Colors.white54,
+                                                ),
+                                              ),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                await controller
+                                                    .excluirPasta(index);
+                                                Get.back();
+                                              },
+                                              child: const Text(
+                                                'Continuar',
+                                                style: TextStyle(
+                                                  fontFamily: 'Montserrat',
+                                                  color: Colors.redAccent,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       );
                     },
@@ -215,6 +318,7 @@ class _HomePageState extends State<HomePage> {
     required String numero,
     required Color color,
     required Color textColor,
+    VoidCallback? onMorePressed,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -229,7 +333,7 @@ class _HomePageState extends State<HomePage> {
             right: 0,
             child: IconButton(
               icon: Icon(Icons.more_vert, color: textColor),
-              onPressed: () {},
+              onPressed: onMorePressed,
             ),
           ),
           Column(

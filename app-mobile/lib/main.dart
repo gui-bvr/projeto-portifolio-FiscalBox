@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:portifolio_fiscal_box/controllers/home_controller.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'routes/app_routes.dart';
@@ -14,6 +15,7 @@ Future<void> main() async {
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
   Get.put(AuthController());
+  Get.put(HomeController(), permanent: true);
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }

@@ -4,14 +4,14 @@ import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../../controllers/home_controller.dart';
 
-class AddFolderPage extends StatefulWidget {
-  const AddFolderPage({super.key});
+class EditFolderPage extends StatefulWidget {
+  const EditFolderPage({super.key});
 
   @override
-  State<AddFolderPage> createState() => _AddFolderPageState();
+  State<EditFolderPage> createState() => _EditFolderPageState();
 }
 
-class _AddFolderPageState extends State<AddFolderPage> {
+class _EditFolderPageState extends State<EditFolderPage> {
   final tipoController = TextEditingController();
   final numeroController = TextEditingController();
   final controller = Get.find<HomeController>();
@@ -27,8 +27,19 @@ class _AddFolderPageState extends State<AddFolderPage> {
   );
 
   bool _useCnpj = false;
+  int? pastaIndex;
 
-  Future<void> _adicionarPasta() async {
+  @override
+  void initState() {
+    super.initState();
+    final pasta = Get.arguments as Map<String, dynamic>;
+    tipoController.text = pasta['tipo'] ?? '';
+    numeroController.text = pasta['numero'] ?? '';
+    pastaIndex = controller.pastas.indexWhere(
+        (p) => p['tipo'] == pasta['tipo'] && p['numero'] == pasta['numero']);
+  }
+
+  void _editarPasta() {
     final tipo = tipoController.text.trim();
     final numero = numeroController.text.trim();
 
@@ -37,7 +48,10 @@ class _AddFolderPageState extends State<AddFolderPage> {
       return;
     }
 
-    await controller.adicionarPasta({'tipo': tipo, 'numero': numero});
+    if (pastaIndex != null && pastaIndex! >= 0) {
+      controller.editarPasta(pastaIndex!, {'tipo': tipo, 'numero': numero});
+    }
+
     Get.back();
   }
 
@@ -68,7 +82,7 @@ class _AddFolderPageState extends State<AddFolderPage> {
                   _buildBackButton(),
                   const SizedBox(height: 35),
                   const Text(
-                    'NOVA PASTA',
+                    'EDITAR PASTA',
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 32,
@@ -126,7 +140,7 @@ class _AddFolderPageState extends State<AddFolderPage> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: _adicionarPasta,
+                      onPressed: _editarPasta,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
@@ -135,7 +149,7 @@ class _AddFolderPageState extends State<AddFolderPage> {
                         ),
                       ),
                       child: const Text(
-                        'Adicionar',
+                        'Salvar Alterações',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 18,

@@ -13,6 +13,7 @@ import '../modules/home_screens/home_page.dart';
 import '../modules/home_screens/help_page.dart';
 import '../modules/home_screens/about_page.dart';
 import '../modules/home_screens/add_folder.dart';
+import '../modules/home_screens/edit_folder.dart';
 
 // Rotas:
 class AppRoutes {
@@ -23,11 +24,14 @@ class AppRoutes {
     GetPage(name: '/login', page: () => LoginPage()),
     GetPage(name: '/register', page: () => RegisterPage()),
     GetPage(name: '/forgotten', page: () => ForgottenPasswordPage()),
-    GetPage(name: '/adicionar', page: () => AddFolderPage()),
     // --> Páginas Principais
     // (/modules/home_screens)
+    // Header
     GetPage(name: '/home', page: () => HomePage()),
     GetPage(name: '/ajuda', page: () => HelpPage()),
     GetPage(name: '/sobre', page: () => AboutPage()),
+    // Home
+    GetPage(name: '/adicionar', page: () => AddFolderPage()),
+    GetPage(name: '/editar', page: () => EditFolderPage()),
   ];
 }
