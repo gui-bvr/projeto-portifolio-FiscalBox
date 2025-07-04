@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 // (/modules/login_screens)
 import '../modules/login_screens/forgotten_page.dart';
 import '../modules/login_screens/login_page.dart';
+import '../modules/login_screens/splash_page.dart';
 import '../modules/login_screens/welcome_page.dart';
 import '../modules/login_screens/register_page.dart';
 
@@ -12,14 +13,15 @@ import '../modules/login_screens/register_page.dart';
 import '../modules/home_screens/home_page.dart';
 import '../modules/home_screens/help_page.dart';
 import '../modules/home_screens/about_page.dart';
-import '../modules/home_screens/add_folder.dart';
-import '../modules/home_screens/edit_folder.dart';
+import '../modules/home_screens/add_folder_page.dart';
+import '../modules/home_screens/edit_folder_page.dart';
 
 // Rotas:
 class AppRoutes {
   static final routes = [
     // --> Páginas de Login/Início
     // (/modules/login_screens)
+    GetPage(name: '/splash', page: () => SplashPage()),
     GetPage(name: '/welcome', page: () => WelcomePage()),
     GetPage(name: '/login', page: () => LoginPage()),
     GetPage(name: '/register', page: () => RegisterPage()),
