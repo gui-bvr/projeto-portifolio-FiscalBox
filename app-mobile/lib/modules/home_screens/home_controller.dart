@@ -6,11 +6,12 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Simula o primeiro cartão automaticamente após cadastro
-    documentos.add({
-      "tipo": "CPF",
-      "numero": "123.456.789-00",
-    });
+    documentos.add(
+      {
+        "tipo": "CPF",
+        "numero": "123.456.789-00",
+      },
+    );
   }
 
   void adicionarDocumento(String tipo, String numero) {

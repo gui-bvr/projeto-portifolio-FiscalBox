@@ -37,7 +37,7 @@ class SettingsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Configurações',
+                    'CONFIGURAÇÕES',
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 32,
@@ -193,10 +193,10 @@ class SettingsPage extends StatelessWidget {
         final data = jsonDecode(response.body);
         final status = data['page']['status'];
         return status == 'UP'
-            ? 'SEFAZ está operando normalmente.'
-            : 'SEFAZ está inoperante no momento.';
+            ? 'O SEFAZ está operando normalmente.'
+            : 'O SEFAZ está inoperante no momento.';
       } else {
-        return 'Erro ao consultar o status do SEFAZ. Tente novamente.';
+        return 'Erro ao consultar o status do SEFAZ. Tente novamente mais tarde.';
       }
     } catch (e) {
       return 'Erro de conexão ao consultar o status do SEFAZ.';

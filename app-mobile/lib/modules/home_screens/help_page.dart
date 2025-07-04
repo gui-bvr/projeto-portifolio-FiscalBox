@@ -59,7 +59,7 @@ class HelpPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 35),
                   const Text(
-                    'Ajuda',
+                    'AJUDA',
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 36,

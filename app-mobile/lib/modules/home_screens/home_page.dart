@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/cupertino.dart';
+import '../../utils/saudacao.dart';
 import 'home_controller.dart';
 import 'settings_page.dart';
 
@@ -16,17 +17,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final controller = Get.put(HomeController());
   int _currentIndex = 0;
-
-  String saudacao() {
-    final hora = DateTime.now().hour;
-    if (hora < 12) {
-      return 'Bom dia,';
-    } else if (hora < 18) {
-      return 'Boa tarde,';
-    } else {
-      return 'Boa noite,';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
