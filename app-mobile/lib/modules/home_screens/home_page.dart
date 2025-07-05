@@ -186,7 +186,10 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       final doc = controller.pastas[index];
                       return GestureDetector(
-                        onTap: () => Get.toNamed('/detalhes', arguments: doc),
+                        onTap: () {
+                          final doc = controller.pastas[index];
+                          Get.toNamed('/pasta', arguments: doc);
+                        },
                         child: buildCard(
                           tipo: doc['tipo']!,
                           numero: doc['numero']!,

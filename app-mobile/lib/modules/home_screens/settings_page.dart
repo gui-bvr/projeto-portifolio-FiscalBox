@@ -135,7 +135,7 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _solicitarSenha(BuildContext context, String tipo) {
-    final TextEditingController _senhaController = TextEditingController();
+    final TextEditingController senhaController = TextEditingController();
 
     showDialog(
       context: context,
@@ -148,7 +148,7 @@ class SettingsPage extends StatelessWidget {
               color: Colors.white,
             )),
         content: TextField(
-          controller: _senhaController,
+          controller: senhaController,
           obscureText: true,
           style: TextStyle(color: Colors.white),
           decoration: InputDecoration(
@@ -165,7 +165,7 @@ class SettingsPage extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () async {
-              final senha = _senhaController.text.trim();
+              final senha = senhaController.text.trim();
               if (senha.isNotEmpty) {
                 await secureStorage.write(key: 'senha_$tipo', value: senha);
                 Get.back();

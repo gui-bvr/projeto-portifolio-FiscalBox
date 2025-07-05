@@ -21,6 +21,8 @@ class HelpPage extends StatelessWidget {
     },
   ];
 
+  HelpPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 
 // --> Páginas de Login/Início
 // (/modules/login_screens)
+import '../modules/home_screens/folders_screens/notas_fiscais_folder_page.dart';
 import '../modules/login_screens/forgotten_page.dart';
 import '../modules/login_screens/login_page.dart';
 import '../modules/login_screens/splash_page.dart';
@@ -35,5 +36,7 @@ class AppRoutes {
     // Home
     GetPage(name: '/adicionar', page: () => AddFolderPage()),
     GetPage(name: '/editar', page: () => EditFolderPage()),
+
+    GetPage(name: '/pasta', page: () => NotaFiscalPastaPage()),
   ];
 }
