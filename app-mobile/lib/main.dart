@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'FiscalBox',
       debugShowCheckedModeBanner: false,
-      initialRoute: '/splash',
+      initialRoute: '/tutorial',
       getPages: AppRoutes.routes,
       locale: Locale('pt', 'BR'),
     );

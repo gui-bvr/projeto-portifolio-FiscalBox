@@ -14,6 +14,7 @@ import '../modules/login_screens/register_page.dart';
 import '../modules/home_screens/home_page.dart';
 import '../modules/home_screens/help_page.dart';
 import '../modules/home_screens/about_page.dart';
+import '../modules/home_screens/tutorial_page.dart';
 import '../modules/home_screens/add_folder_page.dart';
 import '../modules/home_screens/edit_folder_page.dart';
 
@@ -36,7 +37,7 @@ class AppRoutes {
     // Home
     GetPage(name: '/adicionar', page: () => AddFolderPage()),
     GetPage(name: '/editar', page: () => EditFolderPage()),
-
+    GetPage(name: '/tutorial', page: () => TutorialPage()),
     GetPage(name: '/pasta', page: () => NotaFiscalPastaPage()),
   ];
 }
