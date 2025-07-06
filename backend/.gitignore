@@ -1,1 +1,30 @@
+# Dependências do Node.js
+node_modules/
+
+# Logs do NPM
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# .env
 .env
+
+# Logs de aplicação
+logs/
+*.log
+
+# Pastas de cache/temporárias
+tmp/
+temp/
+
+# .DS_Store
+.DS_Store
+
+# Resultados de testes
+coverage/
+.nyc_output/
+
+# Arquivos Data (Notas Fiscais e Certificados)
+data/notasData
+data/**/*.pfx
+data/**/*.p12
