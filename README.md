@@ -51,23 +51,32 @@ Essa checagem evita tentativas frustradas de consulta em momentos de instabilida
 
 ## Tecnologias Utilizadas
 
-### **Linguagens e Frameworks**:
-- **Dart:** Linguagem principal do aplicativo do projeto.
+### **Linguagens e Frameworks:**
+- **Dart:** Utilizada no desenvolvimento do frontend com Flutter.
 - **Flutter:** Framework baseado em Dart.
+- **JavaScript:** Utilizada no no desenvolvimento do backend com Node.js.
+- **Node.js:** Plataforma para desenvolvimento do backend da aplicação.
+- **Express:** Framework web utilizado para construção das rotas e lógica da API e do WebService do SEFAZ.
 
-### **Gerenciamento de Estado e Armazenamento Local**:
+### **Gerenciamento de Estado e Armazenamento Local:**
 - **GetX:** Package do Flutter para navegação e gerenciamento de estado reativo.
 - **GetStorage:** Package do Flutter para armazenamento leve, temporario e rápido de dados locais.
 - **Flutter Secure Storage:** Package do Flutter para armazenamento seguro para dados sensíveis (tokens e certificados digitais).
 
-### **Integrações e Comunicação**
+### **Integrações e Comunicação:**
 - **HTTP:** Package do Flutter para realização de requisições REST para APIs externas.
+- **CORS:** Dependência do Node.js para habilitar uma comunicação segura entre o backend e o frontend Flutter.
+- **node-forge:** Para manipulação de certificados digitais e segurança criptográfica.
 - **Supabase:** Backend de serviço para login, sincronização de dados e autenticação de usuários.
+- **SEFAZ (via WebService):** Para consultas de notas fiscais.
 
-### **Testes**
+### **Testes:**
 - **flutter_test:** Cobertura de testes unitários do Flutter.
 
-### **Compatibilidade e Portabilidade**
+### **Outros:**
+- **Docker:** Para containerizar o ambiente Node.js, facilitando o deploy, testes e portabilidade do backend.
+
+### **Compatibilidade e Portabilidade:**
 Aplicação testada em:
 - **iOS 18.1** (Emulador iPhone 16 Pro Max)
 - **Android 13** (Emulador Google Pixel 6 Pro)
