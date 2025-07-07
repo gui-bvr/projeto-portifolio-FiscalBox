@@ -1,6 +1,7 @@
 <p align="center">
-    <img src="https://github.com/gui-bvr/projeto-portifolio-FiscalBox/blob/main/assets/icons/FiscalBox-icon-rounded.png?raw=true" alt="logo-top" height="150">
+  <img src="https://github.com/gui-bvr/projeto-portifolio-FiscalBox/blob/main/assets/icons/FiscalBox-icon-rounded.png?raw=true" alt="logo-top" style="width: 150px;" />
 </p>
+
 <h1 align="center">FiscalBox</h1>
 <p align="center">Seu controle de notas fiscais.<p>
 
@@ -38,9 +39,9 @@ Essa abordagem reforça o compromisso da aplicação com a **privacidade e prote
 
 Como funcionalidade adicional, o aplicativo realiza a verificação do **status dos servidores da SEFAZ em tempo real**, informando ao usuário se o sistema está:
 
-- ✅ **Operante**
-- ⚠️ **Com lentidão**
-- ❌ **Inoperante**
+- **Operante**
+- **Com lentidão**
+- **Inoperante**
 
 Essa funcionalidade é possível graças à integração com o serviço da API pública da [WebmaniaBR](https://monitorsefaz.webmaniabr.com/public-api)
 
@@ -78,16 +79,12 @@ Aplicação testada em:
 
 ### Diagrama de Caso de Uso
 
-O diagrama representa o fluxo principal de navegação do aplicativo, desde a abertura até a visualização das notas fiscais. O usuário inicia na tela SplashScreen, que verifica se ele está autenticado, se estiver logado, é redirecionado diretamente para a tela principal, caso contrário, é direcionado para a tela de boas-vindas.
+O diagrama representa o fluxo principal de navegação do aplicativo, desde a abertura até o gerenciamento das notas fiscais. O usuário inicia com a aplicação exibindo a SplashScreen, que verifica se ele está autenticado. Se estiver autenticado, é redirecionado diretamente para a tela principal, caso contrário, é direcionado para a tela de boas-vindas.
 Usuários já cadastrados, mas que não estão logados, vão para a tela de login, novos usuários seguem para a tela de registro.
-Após o login ou registro, todos os usuários acessam a Tela principal, onde podem: Visualizar os CPFs ou CNPJs cadastrados ou cadastrar um novo CPF ou CNPJ, o que exige a inserção de um certificado digital.
-Ambas as opções levam o usuário à tela de gerenciamento de notas fiscais, onde ele pode consultar e acompanhar as notas fiscais.
+Após o login ou registro, todos os usuários acessam a Tela principal, onde podem: Visualizar os CPFs ou CNPJs cadastrados ou cadastrar um novo CPF ou CNPJ.
+Ambas as opções levam o usuário à tela de gerenciamento de notas fiscais, onde é possivel consultar e gerenciar as notas fiscais.
 
 ```mermaid
----
-title: FiscalBox - Caso de uso
----
-
 flowchart TD
     User((Usuário)) --> SplashScreen(Tela SplashScreen)
     SplashScreen --> |Se estiver logado| HomePage(Tela principal)
@@ -100,6 +97,49 @@ flowchart TD
     HomePage --> Register([Cadastrar novo CPF ou CNPJ])
     ShowContent --> ViewContent(Tela de gerenciamento de notas fiscais)
     Register --> |Inserir certificado digital| ViewContent
+```
+
+</br>
+
+### Diagrama de Arquitetura
+
+Esse diagrama mostra a arquitetura do sistema dividida em 4 partes principais:
+
+- Aplicativo: Executado no celular, onde se conecta com o Backend, possui um banco local e se, caso o usuário queira, se conecta com a nuvem.
+
+- Backend NodeJS: Recebe dados do app, se comunica com a SEFAZ, recebe as informações, e salva em seu banco de dados temporariamente para enviar ao aplicativo novamente.
+
+- API do SEFAZ-SP: Faz consultas no banco de dados do SEFAZ e retorna os dados armazenados.
+
+- Gateways: São os pontos de entrada pela internet, um que conectam o app ao backend e outro à nuvem.
+
+```mermaid
+architecture-beta
+
+service gateway1(internet)[Gateway]
+service gateway2(internet)[Gateway]
+service DBCloud(cloud)[Database Cloud]
+
+group api_sefaz_sp(cloud)[API SEFAZ SP]
+    service DBSefaz(database)[Database] in api_sefaz_sp
+    service ServerSefaz(server)[Servidor] in api_sefaz_sp
+
+group backend_NodeJS(server)[Servidor NodeJS Backend]
+    service DBNode(database)[Database] in backend_NodeJS
+    service ServerNode(server)[Servidor] in backend_NodeJS
+
+group App(disk)[Aplicativo]
+    service Aplicativo(disk)[Aplicativo] in App
+    service DBAplicativo(database)[Database Local] in App
+    
+DBAplicativo:R -- L:Aplicativo
+Aplicativo:T --> R:gateway2
+gateway2:L --> R:DBCloud
+gateway1:T -- B:ServerNode
+ServerNode:T -- B:DBNode
+gateway1:R -- L:ServerSefaz
+ServerSefaz:T -- B:DBSefaz
+Aplicativo:R -- L:ServerNode
 ```
 
 </br>
@@ -140,9 +180,44 @@ flowchart TD
 
 ## Instruções de Uso
 
+### Backend
+Primeiramente, para a aplicação conseguir se conectar com o SEFAZ (nesse caso, o SEFAZ de São Paulo), é necessario compilar e executar o backend (localizado na pasta "/backend"), em uma máquina, ou servidor com acesso a internet, alem de possuir o [NodeJS](https://nodejs.org/) e o [Docker](https://www.docker.com/) préviamente instalados e configurados.
+Após isso, siga os seguintes passos:
+
+1 - Na pasta raíz/root do backend, execute o seguinte comando para instalar as dependências:
+
+```bash
+npm install
+```
+
+2 - Ainda na mesma pasta, crie um arquivo `.env` com o parâmetro de uma chave de criptografia de 32 bytes (64 caracteres hexadecimais), que será responsavel pela criptografia dos dados transmitidos pelo backend.
+
+```env
+ENCRYPTION_KEY="SUA CHAVE"
+```
+
+Verifique cuidadosamente para não haver espaços em branco extras ou caracteres ocultos.
+
+Essa chave pode ser gerada da forma que achar melhor, mas tambem é possivel criar uma usando o script na pasta **"backend/utils/generateEncryptionKey.js"**, caso preferir, navegue até a pasta e execute o comando:
+
+```bash
+node generateEncryptionKey.js
+```
+
+3 - Configure o Docker para criar uma imagem, e subir um container. Para fazer diretamente no terminal, use os seguintes comandos:
+
+```bash
+docker build --no-cache -t fiscalbox-backend .
+docker rm -f fiscalbox-app
+docker run -p 3000:3000 --name fiscalbox-app fiscalbox-backend
+```
+
+</br>
+
 ### Configuração do Supabase
 
 Para que a aplicação funcione corretamente, é necessário ter uma instância previamente configurada no [Supabase](https://supabase.com/). Essa instância é responsável por gerenciar a autenticação dos usuários, guardar os dados das pastas, e garantir a segurança dos dados durante o uso do sistema.
+Após isso, siga os seguintes passos:
 
 1 - Criar Conta e Instância no Supabase
 
@@ -199,6 +274,7 @@ ON pastas
 FOR DELETE
 USING (user_id = auth.uid());
 ```
+</br>
 
 ### Aplicação Flutter
 
@@ -224,6 +300,8 @@ flutter pub get
 ```bash
 flutter run
 ```
+
+</br>
 
 ## Restrições
 A aplicação ainda possui algumas limitações:
