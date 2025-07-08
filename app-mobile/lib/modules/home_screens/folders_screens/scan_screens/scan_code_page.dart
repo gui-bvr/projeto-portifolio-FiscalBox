@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../services/api_service.dart';
 
 class ScanCodePage extends StatefulWidget {
   const ScanCodePage({super.key});
@@ -11,16 +12,62 @@ class ScanCodePage extends StatefulWidget {
 
 class _ScanCodePageState extends State<ScanCodePage> {
   final codigoController = TextEditingController();
+  final apiService = ApiService();
 
-  void _adicionarNota() {
+  void _adicionarNota() async {
     final codigo = codigoController.text.trim();
     if (codigo.length != 44) {
       Get.snackbar('Erro', 'A chave de acesso deve conter 44 dígitos.');
       return;
     }
 
-    // TODO: lógica para adicionar a nota
-    Get.back(); // volta após adicionar
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(color: Colors.white),
+      ),
+      barrierDismissible: false,
+    );
+
+    try {
+      await Future.delayed(const Duration(seconds: 2));
+      await apiService.fetchNotaFiscal(codigo);
+      Get.back();
+      _mostrarDialogo('Nota adicionada com sucesso!', true);
+    } catch (e) {
+      Get.back();
+      _mostrarDialogo('Erro ao adicionar a nota!', false);
+    }
+  }
+
+  void _mostrarDialogo(String mensagem, bool sucesso) {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        title: Text(
+          mensagem,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            color: Colors.white70,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text(
+              'OK',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _scanearQRCode() {
@@ -54,7 +101,7 @@ class _ScanCodePageState extends State<ScanCodePage> {
                   _buildBackButton(),
                   const SizedBox(height: 35),
                   const Text(
-                    'ADICIONAR POR CÓDIGO',
+                    'ADICIONAR POR CÓDIGO/\nCHAVE DE ACESSO',
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 26,
@@ -87,15 +134,12 @@ class _ScanCodePageState extends State<ScanCodePage> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'O código da nota fiscal, também conhecido como chave de acesso, '
-                    'é um número de 44 dígitos que identifica de forma única cada '
-                    'Nota Fiscal Eletrônica (NF-e). Ele pode ser encontrado no DANFE '
-                    '(geralmente no canto superior direito, abaixo do código de barras) '
-                    'ou no arquivo XML, na tag correspondente.',
+                    'O código da nota fiscal, também conhecido como chave de acesso, é um número de 44 dígitos que identifica cada Nota Fiscal Eletrônica (NF-e).'
+                    ' Ele pode ser encontrado próximo ao código de barras, ou QR Code da Nota, ou geralmente em algum dos cantos superiores ou inferiores.',
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       color: Colors.white70,
-                      fontSize: 14,
+                      fontSize: 16,
                     ),
                   ),
                   const Spacer(),

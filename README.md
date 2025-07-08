@@ -296,6 +296,7 @@ Após isso, siga os seguintes passos:
 ```env
 SUPABASE_URL="SUA URL"
 SUPABASE_ANON_KEY="SUA CHAVE"
+SERVER_URL="URL,IP OU LINK DO SERVIDOR"
 ```
 
 2 - Instale as dependências do projeto principal com o comando abaixo:
