@@ -23,7 +23,10 @@ class NotaFiscalPastaPage extends StatelessWidget {
             title: const Text('Adicionar por código',
                 style: TextStyle(color: Colors.white)),
             onTap: () {
-              Get.toNamed('/scan_code');
+              Get.toNamed(
+                '/scan_code',
+                arguments: {'numero': '123456', 'tipo': 'meus-codigos'},
+              );
             },
           ),
           ListTile(

@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../services/api_service.dart';
+import '../../../../services/local_db_service.dart';
 
 class ScanCodePage extends StatefulWidget {
   const ScanCodePage({super.key});
@@ -11,8 +12,11 @@ class ScanCodePage extends StatefulWidget {
 }
 
 class _ScanCodePageState extends State<ScanCodePage> {
+  final Map<String, String> pasta =
+      Map<String, String>.from(Get.arguments ?? {});
   final codigoController = TextEditingController();
   final apiService = ApiService();
+  final dbService = LocalDbService();
 
   void _adicionarNota() async {
     final codigo = codigoController.text.trim();
@@ -22,20 +26,52 @@ class _ScanCodePageState extends State<ScanCodePage> {
     }
 
     Get.dialog(
-      const Center(
-        child: CircularProgressIndicator(color: Colors.white),
-      ),
+      const Center(child: CircularProgressIndicator(color: Colors.white)),
       barrierDismissible: false,
     );
 
     try {
-      await Future.delayed(const Duration(seconds: 2));
-      await apiService.fetchNotaFiscal(codigo);
+      await Future.delayed(const Duration(seconds: 1));
+      final nota = await apiService.fetchNotaFiscal(codigo);
+
+      await dbService.insertNotaFiscal(
+        {
+          'chaveAcesso': nota.chaveAcesso,
+          'numero': nota.numero,
+          'dataEmissao': nota.dataEmissao,
+          'valorTotal': nota.valorTotal,
+          'emitente': {
+            'nome': nota.emitente.nome,
+            'cnpj': nota.emitente.cnpj,
+            'endereco': nota.emitente.endereco,
+            'nomeFantasia': nota.emitente.nomeFantasia,
+            'municipio': nota.emitente.municipio,
+            'uf': nota.emitente.uf,
+          },
+          'destinatario': {
+            'nome': nota.destinatario.nome,
+            'cpfCnpj': nota.destinatario.cpfCnpj,
+          },
+          'itens': nota.itens
+              .map((item) => {
+                    'descricao': item.descricao,
+                    'quantidade': item.quantidade,
+                    'valorUnitario': item.valorUnitario,
+                    'valorTotalItem': item.valorTotalItem,
+                  })
+              .toList(),
+          'tipoNota': nota.tipoNota,
+        },
+        pasta['numero'] ?? '',
+      );
+
       Get.back();
-      _mostrarDialogo('Nota adicionada com sucesso!', true);
+      Get.snackbar('Sucesso', 'Nota adicionada com sucesso!',
+          backgroundColor: Colors.green, colorText: Colors.white);
     } catch (e) {
       Get.back();
-      _mostrarDialogo('Erro ao adicionar a nota!', false);
+      Get.snackbar('Erro', 'Erro ao adicionar a nota!',
+          backgroundColor: Colors.red, colorText: Colors.white);
     }
   }
 

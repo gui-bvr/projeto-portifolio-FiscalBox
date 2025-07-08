@@ -26,7 +26,6 @@ class _EditFolderPageState extends State<EditFolderPage> {
     filter: {"#": RegExp(r'[0-9]')},
   );
 
-  bool _useCnpj = false;
   int? pastaIndex;
 
   @override
@@ -103,10 +102,8 @@ class _EditFolderPageState extends State<EditFolderPage> {
                       final onlyNumbers = value.replaceAll(RegExp(r'\D'), '');
                       String masked = '';
                       if (onlyNumbers.length > 11) {
-                        _useCnpj = true;
                         masked = _cnpjMask.maskText(onlyNumbers);
                       } else {
-                        _useCnpj = false;
                         masked = _cpfMask.maskText(onlyNumbers);
                       }
                       setState(() {

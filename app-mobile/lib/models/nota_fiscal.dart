@@ -1,4 +1,6 @@
-// lib/models/nota_fiscal.dart
+// [Modelo de Exemplo de Nota Fiscal]
+// /Não retorna todos os dados por segurança/
+// !!! --- NÃO USAR EM PRODUÇÃO --- !!!
 
 class NotaFiscal {
   final String chaveAcesso;

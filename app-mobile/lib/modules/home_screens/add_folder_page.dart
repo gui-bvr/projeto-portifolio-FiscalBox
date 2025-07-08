@@ -26,8 +26,6 @@ class _AddFolderPageState extends State<AddFolderPage> {
     filter: {"#": RegExp(r'[0-9]')},
   );
 
-  bool _useCnpj = false;
-
   Future<void> _adicionarPasta() async {
     final tipo = tipoController.text.trim();
     final numero = numeroController.text.trim();
@@ -89,10 +87,8 @@ class _AddFolderPageState extends State<AddFolderPage> {
                       final onlyNumbers = value.replaceAll(RegExp(r'\D'), '');
                       String masked = '';
                       if (onlyNumbers.length > 11) {
-                        _useCnpj = true;
                         masked = _cnpjMask.maskText(onlyNumbers);
                       } else {
-                        _useCnpj = false;
                         masked = _cpfMask.maskText(onlyNumbers);
                       }
                       setState(() {

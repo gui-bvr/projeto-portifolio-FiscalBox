@@ -1,12 +1,10 @@
-// lib/services/api_service.dart
-
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+//import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../models/nota_fiscal.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://127.0.0.1:3000';
+  static const String _baseUrl = 'http://localhost:3000';
 
   Future<NotaFiscal> fetchNotaFiscal(String chaveAcesso) async {
     final response =
