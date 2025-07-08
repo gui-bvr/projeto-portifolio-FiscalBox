@@ -23,8 +23,7 @@ class NotaFiscalPastaPage extends StatelessWidget {
             title: const Text('Adicionar por código',
                 style: TextStyle(color: Colors.white)),
             onTap: () {
-              Get.back();
-              // Navegar para página de adicionar por código
+              Get.toNamed('/scan_code');
             },
           ),
           ListTile(
@@ -32,17 +31,7 @@ class NotaFiscalPastaPage extends StatelessWidget {
             title: const Text('Adicionar por QR Code',
                 style: TextStyle(color: Colors.white)),
             onTap: () {
-              Get.back();
-              // Navegar para página de adicionar por QR code
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.file_upload, color: Colors.white),
-            title: const Text('Adicionar por XML',
-                style: TextStyle(color: Colors.white)),
-            onTap: () {
-              Get.back();
-              // Navegar para página de adicionar por XML
+              Get.toNamed('/scan_qr_code');
             },
           ),
         ],
@@ -104,11 +93,9 @@ class NotaFiscalPastaPage extends StatelessWidget {
                       mainAxisSpacing: 16,
                       childAspectRatio: 0.9,
                     ),
-                    itemCount: 6, // Substituir com lista de notas fiscais
+                    itemCount: 6,
                     itemBuilder: (context, index) => GestureDetector(
-                      onTap: () {
-                        // Navegar para detalhes da nota
-                      },
+                      onTap: () {},
                       child: Container(
                         decoration: BoxDecoration(
                           color: const Color(0xFFE8EFFA),
