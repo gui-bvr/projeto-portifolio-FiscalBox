@@ -331,6 +331,10 @@ flutter run
 
 </br>
 
+## Demonstração
+
+https://github.com/user-attachments/assets/365b3927-3be4-447b-b009-8a0cc0353893
+
 ## Restrições
 A aplicação ainda possui algumas limitações:
 
