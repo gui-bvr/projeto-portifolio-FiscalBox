@@ -1,4 +1,4 @@
-import 'package:portifolio_fiscal_box/models/nota_fiscal.dart';
+import 'package:fiscal_box/models/nota_fiscal.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 

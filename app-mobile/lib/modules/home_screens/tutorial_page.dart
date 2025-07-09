@@ -14,17 +14,17 @@ class _TutorialPageState extends State<TutorialPage> {
 
   final List<Map<String, String>> _pages = [
     {
-      'image': 'assets/images/onboarding1.png',
+      'image': 'assets/images/tutorial1.png',
       'title': 'Organize suas notas',
       'subtitle': 'Crie pastas com CPF ou CNPJ e mantenha tudo no lugar certo.',
     },
     {
-      'image': 'assets/images/onboarding2.png',
+      'image': 'assets/images/tutorial2.pngg',
       'title': 'Centralize seus documentos',
       'subtitle': 'Visualize, envie para contabilidade e mantenha backups.',
     },
     {
-      'image': 'assets/images/onboarding3.png',
+      'image': 'assets/images/tutorial3.png',
       'title': 'Simples e Rápido',
       'subtitle':
           'Pensado para facilitar seu controle fiscal com poucos toques.',

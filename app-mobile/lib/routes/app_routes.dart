@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 
 // --> Páginas de Login/Início
 // (/modules/login_screens)
+import '../modules/home_screens/folders_screens/detalhes_notas_page.dart';
 import '../modules/login_screens/forgotten_page.dart';
 import '../modules/login_screens/login_page.dart';
 import '../modules/login_screens/splash_page.dart';
@@ -21,7 +22,7 @@ import '../modules/home_screens/edit_folder_page.dart';
 // (/modules/login_screens/scan_screens)
 import '../modules/home_screens/folders_screens/scan_screens/scan_qr_code_page.dart';
 import '../modules/home_screens/folders_screens/scan_screens/scan_code_page.dart';
-import '../modules/home_screens/folders_screens/notas_fiscais_folder_page.dart';
+import '../modules/home_screens/folders_screens/notas_folder_page.dart';
 
 // Rotas:
 class AppRoutes {
@@ -48,5 +49,6 @@ class AppRoutes {
     // (/modules/login_screens/scan_screens)
     GetPage(name: '/scan_code', page: () => ScanCodePage()),
     GetPage(name: '/scan_qr_code', page: () => ScanQrCodePage()),
+    GetPage(name: '/detalhes_nota', page: () => DetalhesNotaPage()),
   ];
 }
