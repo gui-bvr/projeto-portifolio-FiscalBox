@@ -1,12 +1,46 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../services/local_db_service.dart';
 
-class NotaFiscalPastaPage extends StatelessWidget {
+class NotasController extends GetxController {
+  var notas = <Map<String, dynamic>>[].obs;
+
+  void atualizarNotas(List<Map<String, dynamic>> novasNotas) {
+    notas.assignAll(novasNotas);
+  }
+
+  void removerNota(int index) {
+    notas.removeAt(index);
+  }
+}
+
+class NotaFiscalPastaPage extends StatefulWidget {
   final Map<String, String> pasta =
       Map<String, String>.from(Get.arguments ?? {});
 
   NotaFiscalPastaPage({super.key});
+
+  @override
+  State<NotaFiscalPastaPage> createState() => _NotaFiscalPastaPageState();
+}
+
+class _NotaFiscalPastaPageState extends State<NotaFiscalPastaPage> {
+  final LocalDbService _dbService = LocalDbService();
+  final NotasController notasController = Get.put(NotasController());
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarNotas();
+  }
+
+  Future<void> _carregarNotas() async {
+    final notas =
+        await _dbService.getNotasPorPasta(widget.pasta['numero'] ?? '');
+    notasController.atualizarNotas(notas);
+  }
 
   void _mostrarOpcoesAdicao(BuildContext context) {
     showModalBottomSheet(
@@ -20,19 +54,30 @@ class NotaFiscalPastaPage extends StatelessWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.code, color: Colors.white),
-            title: const Text('Adicionar por código',
-                style: TextStyle(color: Colors.white)),
+            title: const Text(
+              'Adicionar por código',
+              style: TextStyle(color: Colors.white),
+            ),
             onTap: () {
-              Get.toNamed(
-                '/scan_code',
-                arguments: {'numero': '123456', 'tipo': 'meus-codigos'},
-              );
+              Navigator.of(context).pop();
+              Get.toNamed('/scan_code', arguments: widget.pasta)?.then((_) {
+                _carregarNotas();
+                Get.snackbar(
+                  'Nota adicionada',
+                  'A nota foi salva com sucesso!',
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                  snackPosition: SnackPosition.BOTTOM,
+                );
+              });
             },
           ),
           ListTile(
             leading: const Icon(Icons.qr_code, color: Colors.white),
-            title: const Text('Adicionar por QR Code',
-                style: TextStyle(color: Colors.white)),
+            title: const Text(
+              'Adicionar por QR Code',
+              style: TextStyle(color: Colors.white),
+            ),
             onTap: () {
               Get.toNamed('/scan_qr_code');
             },
@@ -70,7 +115,7 @@ class NotaFiscalPastaPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        pasta['tipo'] ?? 'Notas Fiscais',
+                        widget.pasta['tipo'] ?? 'Notas Fiscais',
                         style: const TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 26,
@@ -87,51 +132,108 @@ class NotaFiscalPastaPage extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.all(20),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.9,
-                    ),
-                    itemCount: 6,
-                    itemBuilder: (context, index) => GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE8EFFA),
-                          borderRadius: BorderRadius.circular(20),
+                  child: Obx(() => GridView.builder(
+                        padding: const EdgeInsets.all(20),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 0.9,
                         ),
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Nota Fiscal',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.black,
+                        itemCount: notasController.notas.length,
+                        itemBuilder: (context, index) {
+                          final rawJson =
+                              notasController.notas[index]['jsonCompleto'];
+                          final nota =
+                              rawJson != null ? jsonDecode(rawJson) : {};
+                          final emitente = nota['emitente']?['nomeFantasia'] ??
+                              nota['emitente']?['nome'] ??
+                              'Emitente desconhecido';
+                          final data = nota['dataEmissao']
+                                  ?.toString()
+                                  .substring(0, 10) ??
+                              '';
+
+                          return GestureDetector(
+                            onTap: () {
+                              Get.defaultDialog(
+                                title: 'Detalhes da Nota',
+                                titleStyle: const TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                content: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Emitente: $emitente'),
+                                    Text('Data: $data'),
+                                    Text('Valor: R\$ ${nota['valorTotal']}'),
+                                    const SizedBox(height: 10),
+                                    const Text('Itens:',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    ...List<Widget>.from(nota['itens']
+                                            ?.map<Widget>(
+                                          (item) =>
+                                              Text('- ${item['descricao']}'),
+                                        ) ??
+                                        []),
+                                  ],
+                                ),
+                                textCancel: 'Fechar',
+                                textConfirm: 'Excluir',
+                                confirmTextColor: Colors.white,
+                                onConfirm: () async {
+                                  await _dbService.deletarNota(notasController
+                                      .notas[index]['chaveAcesso']);
+                                  notasController.removerNota(index);
+                                  Get.back();
+                                },
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE8EFFA),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    emitente,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Emitida em: $data',
+                                    style: const TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Text(
+                                    'R\$ ${nota['valorTotal'].toStringAsFixed(2)}',
+                                    style: const TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Spacer(),
-                            Text(
-                              'R\$ 243,00',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 20,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                          );
+                        },
+                      )),
                 ),
               ],
             ),

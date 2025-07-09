@@ -184,15 +184,14 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     itemCount: controller.pastas.length,
                     itemBuilder: (context, index) {
-                      final doc = controller.pastas[index];
+                      final pasta = controller.pastas[index];
                       return GestureDetector(
                         onTap: () {
-                          final doc = controller.pastas[index];
-                          Get.toNamed('/pasta', arguments: doc);
+                          Get.toNamed('/pasta', arguments: pasta.toMap());
                         },
                         child: buildCard(
-                          tipo: doc['tipo']!,
-                          numero: doc['numero']!,
+                          tipo: pasta.tipo,
+                          numero: pasta.numero,
                           color: const Color(0xFFE8EFFA),
                           textColor: Colors.black,
                           onMorePressed: () {
@@ -219,8 +218,8 @@ class _HomePageState extends State<HomePage> {
                                       Get.toNamed(
                                         '/editar',
                                         arguments: {
-                                          'tipo': doc['tipo'],
-                                          'numero': doc['numero'],
+                                          'tipo': pasta.tipo,
+                                          'numero': pasta.numero,
                                           'index': index,
                                         },
                                       );

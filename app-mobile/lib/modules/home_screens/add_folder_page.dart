@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../../controllers/home_controller.dart';
+import '../../models/pasta_model.dart';
 
 class AddFolderPage extends StatefulWidget {
   const AddFolderPage({super.key});
@@ -35,7 +36,8 @@ class _AddFolderPageState extends State<AddFolderPage> {
       return;
     }
 
-    await controller.adicionarPasta({'tipo': tipo, 'numero': numero});
+    await controller
+        .adicionarPasta(PastaModel(id: '', tipo: tipo, numero: numero));
     Get.back();
   }
 

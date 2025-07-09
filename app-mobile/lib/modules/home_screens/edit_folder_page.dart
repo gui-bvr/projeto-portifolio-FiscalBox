@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../../controllers/home_controller.dart';
+import '../../models/pasta_model.dart';
 
 class EditFolderPage extends StatefulWidget {
   const EditFolderPage({super.key});
@@ -27,15 +28,20 @@ class _EditFolderPageState extends State<EditFolderPage> {
   );
 
   int? pastaIndex;
+  late PastaModel pasta;
 
   @override
   void initState() {
     super.initState();
-    final pasta = Get.arguments as Map<String, dynamic>;
-    tipoController.text = pasta['tipo'] ?? '';
-    numeroController.text = pasta['numero'] ?? '';
+    final args = Get.arguments as Map<String, dynamic>;
+    pasta = PastaModel.fromMap(args);
+
+    tipoController.text = pasta.tipo;
+    numeroController.text = pasta.numero;
+
     pastaIndex = controller.pastas.indexWhere(
-        (p) => p['tipo'] == pasta['tipo'] && p['numero'] == pasta['numero']);
+      (p) => p.tipo == pasta.tipo && p.numero == pasta.numero,
+    );
   }
 
   void _editarPasta() {
@@ -48,7 +54,12 @@ class _EditFolderPageState extends State<EditFolderPage> {
     }
 
     if (pastaIndex != null && pastaIndex! >= 0) {
-      controller.editarPasta(pastaIndex!, {'tipo': tipo, 'numero': numero});
+      final pastaAtualizada = PastaModel(
+        id: pasta.id,
+        tipo: tipo,
+        numero: numero,
+      );
+      controller.editarPasta(pastaIndex!, pastaAtualizada);
     }
 
     Get.back();
