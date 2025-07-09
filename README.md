@@ -54,7 +54,7 @@ Essa checagem evita tentativas frustradas de consulta em momentos de instabilida
 ### **Linguagens e Frameworks:**
 - **Dart:** Utilizada no desenvolvimento do frontend com Flutter.
 - **Flutter:** Framework baseado em Dart.
-- **JavaScript:** Utilizada no no desenvolvimento do backend com Node.js.
+- **JavaScript:** Utilizada no desenvolvimento do backend com Node.js.
 - **Node.js:** Plataforma para desenvolvimento do backend da aplicação.
 - **Express:** Framework web utilizado para construção das rotas e lógica da API e do WebService do SEFAZ.
 
@@ -80,7 +80,7 @@ Essa checagem evita tentativas frustradas de consulta em momentos de instabilida
 Aplicação testada em:
 - **iOS 18.1** (Emulador iPhone 16 Pro Max)
 - **Android 13** (Emulador Google Pixel 6 Pro)
-- **Android 13** (Samsung S3 - One UI 5.1) 
+- **Android 13** (Samsung S23 - One UI 5.1) 
 
 <br>
 
@@ -144,6 +144,7 @@ architecture-beta
 
 service gateway1(internet)[Gateway]
 service gateway2(internet)[Gateway]
+service gateway3(internet)[Gateway]
 service DBCloud(cloud)[Database Cloud]
 
 group api_sefaz_sp(cloud)[API SEFAZ SP]
@@ -157,6 +158,11 @@ group backend_NodeJS(server)[Servidor NodeJS Backend]
 group App(disk)[Aplicativo]
     service Aplicativo(disk)[Aplicativo] in App
     service DBAplicativo(database)[Database Local] in App
+
+group supabase(cloud)[Supabase]
+    service DBSupabase(database)[Database] in supabase
+    service ServerSupabase(server)[Servidor] in supabase
+
     
 DBAplicativo:R -- L:Aplicativo
 Aplicativo:T --> R:gateway2
@@ -166,6 +172,9 @@ ServerNode:T -- B:DBNode
 gateway1:R -- L:ServerSefaz
 ServerSefaz:T -- B:DBSefaz
 Aplicativo:R -- L:ServerNode
+Aplicativo:B -- T:gateway3
+gateway3:L -- R:ServerSupabase
+DBSupabase:R -- L:ServerSupabase
 ```
 
 </br>
