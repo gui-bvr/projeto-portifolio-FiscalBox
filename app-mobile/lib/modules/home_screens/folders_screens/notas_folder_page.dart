@@ -62,13 +62,13 @@ class _NotaFiscalPastaPageState extends State<NotaFiscalPastaPage> {
               Navigator.of(context).pop();
               Get.toNamed('/scan_code', arguments: widget.pasta)?.then((_) {
                 _carregarNotas();
-                Get.snackbar(
+                /*Get.snackbar(
                   'Nota adicionada',
                   'A nota foi salva com sucesso!',
                   backgroundColor: Colors.green,
                   colorText: Colors.white,
                   snackPosition: SnackPosition.BOTTOM,
-                );
+                );*/
               });
             },
           ),

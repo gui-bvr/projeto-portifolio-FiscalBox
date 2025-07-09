@@ -14,5 +14,5 @@ flowchart TD
     HomePage --> ShowContent([Visualizar CPFs e CNPJs])
     HomePage --> Register([Cadastrar novo CPF ou CNPJ])
     ShowContent --> ViewContent(Tela de gerenciamento de notas fiscais)
-    Register --> |Inserir certificado digital| ViewContent
+    Register --> ViewContent
 ```

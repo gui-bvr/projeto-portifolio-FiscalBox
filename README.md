@@ -17,11 +17,11 @@ Este projeto faz parte do meu portfólio para o curso de Engenharia de Software.
 
 ### Objetivo Principal
 
-A aplicação tem como objetivo oferecer uma solução eficiente para organizar e facilitar o acesso a notas fiscais, garantindo mais controle sobre elas. Com uma interface intuitiva e recursos voltados à praticidade.
+A aplicação tem como objetivo oferecer uma solução eficiente para facilitar o acesso a notas fiscais, garantindo mais controle sobre elas. Com uma interface intuitiva e recursos voltados à praticidade.
 
-Ela foi desenvolvida para **facilitar a organização e visualização de notas fiscais eletrônicas (NFes)** de maneira simples, rápida e acessível. Com uma interface intuitiva, o usuário pode **visualizar todas as notas escaneadas** (pela chave de acesso ou QR Code), filtrá-las por diversos atributos e, caso deseje, **enviá-las para a nuvem**, garantindo um backup seguro dos documentos fiscais.
+Ela foi desenvolvida para **facilitar a visualização de notas fiscais eletrônicas** de maneira simples, rápida e acessível. Com uma interface intuitiva, o usuário pode **visualizar todas as notas escaneadas** (pela chave de acesso ou QR Code) e, caso deseje, **enviá-las para a nuvem**, garantindo um backup seguro dos documentos fiscais.
 
-A aplicação foi desenvolvida com uma arquitetura escalável, permitindo posteriormente sua adaptação para desktops com MacOS, Windows e Linux. No entanto, a prioridade foi garantir praticidade para dispositivos móveis, considerando a necessidade dos usuários de acessar as informações de forma rápida e pratica.
+A aplicação foi desenvolvida com uma arquitetura escalável, permitindo posteriormente sua adaptação para Web e desktops com MacOS, Windows e Linux. No entanto, a prioridade foi garantir praticidade para dispositivos móveis, considerando a necessidade dos usuários de acessar as informações de forma rápida e pratica.
 
 ### Certificado Digital (e-CPF / e-CNPJ)
 
@@ -29,7 +29,7 @@ Para a correta autenticação e consulta das notas fiscais junto ao SEFAZ, é ne
 
 Pensando na **segurança dos dados sensíveis**, o aplicativo adota uma abordagem local e segura:
 
-- O certificado digital **nunca é enviado para servidores externos**.
+- O arquivo do certificado digital **nunca é enviado para servidores externos**.
 - O arquivo e a senha são **armazenados localmente de forma criptografada**, em uma **pasta segura e exclusiva da aplicação**.
 - A criptografia utilizada garante que **nenhuma outra aplicação** ou processo externo tenha acesso aos dados sensíveis.
 
@@ -88,10 +88,27 @@ Aplicação testada em:
 
 ### Diagrama de Caso de Uso
 
-O diagrama representa o fluxo principal de navegação do aplicativo, desde a abertura até o gerenciamento das notas fiscais. O usuário inicia com a aplicação exibindo a SplashScreen, que verifica se ele está autenticado. Se estiver autenticado, é redirecionado diretamente para a tela principal, caso contrário, é direcionado para a tela de boas-vindas.
-Usuários já cadastrados, mas que não estão logados, vão para a tela de login, novos usuários seguem para a tela de registro.
-Após o login ou registro, todos os usuários acessam a Tela principal, onde podem: Visualizar os CPFs ou CNPJs cadastrados ou cadastrar um novo CPF ou CNPJ.
-Ambas as opções levam o usuário à tela de gerenciamento de notas fiscais, onde é possivel consultar e gerenciar as notas fiscais.
+O diagrama representa o fluxo principal de navegação do aplicativo, desde a abertura até o gerenciamento das notas fiscais.
+
+- SplashScreen
+  - Verifica se o usuário está autenticado:
+    - Se autenticado → redireciona para a Tela Principal
+    - Se não autenticado → redireciona para a Tela de Boas-Vindas
+
+- Tela de Boas-Vindas
+  - Usuário já cadastrado → Tela de Login
+  - Novo usuário → Tela de Registro
+
+- Após Login ou Registro
+  - Acesso à Tela Principal:
+    - Visualizar CPFs/CNPJs cadastrados
+    - Cadastrar novo CPF/CNPJ
+
+- Gerenciamento de Notas Fiscais
+  - Ambas as opções levam à:
+    - Tela de Gerenciamento de Notas Fiscais
+      - Consultar notas fiscais
+      - Gerenciar notas fiscais
 
 ```mermaid
 flowchart TD
@@ -105,7 +122,7 @@ flowchart TD
     HomePage --> ShowContent([Visualizar CPFs e CNPJs])
     HomePage --> Register([Cadastrar novo CPF ou CNPJ])
     ShowContent --> ViewContent(Tela de gerenciamento de notas fiscais)
-    Register --> |Inserir certificado digital| ViewContent
+    Register --> ViewContent
 ```
 
 </br>
@@ -165,25 +182,26 @@ Aplicativo:R -- L:ServerNode
 
 **RF04:** A aplicação deve permitir que o usuário encerre sua sessão.
 
-**RF05:** A aplicação deve fazer um backup local antes do envio para a nuvem (caso o usuario deseje).
+**RF05:** A aplicação deve permitir que o usuário visualize suas notas fiscais.
 
-**RF06:** A aplicação deve exportar as notas fiscais para o formato que permita utilização em outros sistemas como ERPs e sistemas de contabilidades (por exemplo).
+**RF06:** A aplicação deve fazer um backup local antes do envio para a nuvem (caso o usuario deseje).
 
-</br>
+**RF07:** A aplicação deve exportar as notas fiscais para o formato que permita utilização em outros sistemas como ERPs e sistemas de contabilidades (por exemplo).
+
+**RF08:** A aplicação deve garantir a segurança dos dados do usuário (certificados digitais e dados).
+
 
 ### Requisitos Não Funcionais:
 
-**RNF01:** A aplicação deve garantir a segurança dos dados do usuário.
+**RNF01:** A aplicação deve ter um bom desempenho na coleta e leitura de dados das notas fiscais.
 
-**RNF02:** A aplicação deve ter um bom desempenho na coleta e leitura de dados das notas fiscais.
+**RNF02:** A aplicação deve ter uma interface intuitiva e fácil de utilizar.
 
-**RNF03:** A aplicação deve ter uma interface intuitiva e fácil de utilizar.
+**RNF03:** A aplicação deve ser modular e bem arquitetada, permitindo atualizações futuras e fácil manutenção.
 
-**RNF04:** A aplicação deve ser modular e bem arquitetada, permitindo atualizações futuras e fácil manutenção.
+**RNF04:** A aplicação deve apresentar testes unitários.
 
-**RNF05:** A aplicação deve apresentar testes unitários.
-
-**RNF06:** A aplicação deve aumentar o suporte para outros tipos de documentos fiscais, emitidos dentro do território Brasileiro, ou por alguma instituição autorizada pelos mesmos, em breve.
+**RNF05:** A aplicação deve aumentar o suporte para outros tipos de documentos fiscais.
 
 <br>
 
@@ -328,9 +346,7 @@ Atualmente, a aplicação não oferece suporte para todos os tipos de documentos
 
 No momento, a aplicação funciona apenas com notas fiscais emitidas por CNPJs registrados no estado de São Paulo.
 Essa limitação ocorre devido à mudança do modo de emissões após a reforma tributaria (Emenda Constitucional 132, de 2023), que limita as consultas de notas fiscais em determinadas por região (a aplicação utiliza o SEFAZ Estadual de São Paulo).
-Por esse motivo tambem, foi determinado que, obrigatoriamente, é necessario um certificado digital **eCPF** ou **eCNPJ** para fazer as consultas.
-
-<br>
+Por esse motivo tambem, foi determinado que, obrigatoriamente, é necessario um certificado digital **e-CPF** ou **e-CNPJ** para fazer as consultas.
 
 ---
-_FiscalBox foi criado por Guilherme Banzati Viana Ribeiro, para o projeto de portifólio de finalização do curso de Engenharia de Software, do Centro Universitario Católica de Santa Catarina._
+_FiscalBox foi criado por Guilherme Banzati Viana Ribeiro, para o projeto de portfólio de finalização do curso de Engenharia de Software, do Centro Universitario Católica de Santa Catarina._
